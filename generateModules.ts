@@ -69,7 +69,7 @@ if (true) {
 export async function generateWaterfall(
   localId: string = uuid(),
   constantsPerLevel = 20,
-  nestedImportsPerLevel = 5,
+  nestedImportsPerLevel = 3,
   levels = 3
 ) {
   console.log(`Generating module ${localId}, w/ levels ${levels}`);
