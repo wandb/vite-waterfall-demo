@@ -2,7 +2,8 @@
   "name": "vite-react-starter",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "rm -rf src/generated && ts-node generateModules.ts && yarn dev:no-generate",
+    "dev:no-generate": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },

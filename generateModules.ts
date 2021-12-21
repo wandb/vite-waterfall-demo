@@ -1,25 +1,75 @@
-import { v4 as uuid } from "uuid";
+import { v4 as uuidOriginal } from "uuid";
 import { promises as fs } from "fs";
 
+const uuid = () => uuidOriginal().replace(/-/g, "");
+
 export async function generateStringConstantModule(localId: string) {
-  console.log(`generating constant ${localId}`);
   const id = uuid();
 
   const dir = `./src/generated/stringConstants`;
   const path = `${dir}/${id}.ts`;
 
-  const source = `export default '${id}';
+  let source = `export default '${id}';
 `;
+
+  source += `let uselessVariable: number = 0;
+`;
+  for (let i = 0; i < 1000; i++) {
+    // just add a bunch of do-nothing code to increase the parse size
+    source += `
+if (true) {
+  uselessVariable += 1
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+  if (false) { uselessVariable = 0 }
+}
+`;
+  }
   await fs.mkdir(dir, { recursive: true });
   await fs.writeFile(path, source);
 
-  return `import ${localId} from './src/generated/stringConstants/${id}`;
+  return `import ${localId} from './stringConstants/${id}'`;
 }
 
 export async function generateWaterfall(
-  localId: string = "root",
-  constantsPerLevel = 5,
-  nestedImportsPerLevel = 3,
+  localId: string = uuid(),
+  constantsPerLevel = 20,
+  nestedImportsPerLevel = 5,
   levels = 3
 ) {
   console.log(`Generating module ${localId}, w/ levels ${levels}`);
@@ -28,7 +78,7 @@ export async function generateWaterfall(
 
   // const imports =
   for (let i = 0; i < constantsPerLevel; i++) {
-    const constantId = localId + "_stringConstant_" + i.toString();
+    const constantId = localId + "_stringConstant_" + uuid();
     imports.push(await generateStringConstantModule(constantId));
     uses.push(
       `console.log('local string constant ${constantId}:', ${constantId})`
@@ -37,7 +87,7 @@ export async function generateWaterfall(
 
   if (levels > 0) {
     for (let i = 0; i < nestedImportsPerLevel; i++) {
-      const nestedId = "_nestedImport_" + i.toString();
+      const nestedId = "_nestedImport_" + uuid();
       imports.push(
         await generateWaterfall(
           nestedId,
@@ -57,4 +107,4 @@ export async function generateWaterfall(
   return `import './${localId}'`;
 }
 
-generateWaterfall();
+generateWaterfall("root");
