@@ -35,16 +35,18 @@ export async function generateWaterfall(
     );
   }
 
-  for (let i = 0; i < nestedImportsPerLevel; i++) {
-    const nestedId = "_nestedImport_" + i.toString();
-    imports.push(
-      await generateWaterfall(
-        nestedId,
-        constantsPerLevel,
-        nestedImportsPerLevel,
-        levels - 1
-      )
-    );
+  if (levels > 0) {
+    for (let i = 0; i < nestedImportsPerLevel; i++) {
+      const nestedId = "_nestedImport_" + i.toString();
+      imports.push(
+        await generateWaterfall(
+          nestedId,
+          constantsPerLevel,
+          nestedImportsPerLevel,
+          levels - 1
+        )
+      );
+    }
   }
 
   const source = [...imports, ...uses].join("\n");
