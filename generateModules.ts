@@ -14,7 +14,7 @@ export async function generateStringConstantModule(localId: string) {
 
   source += `let uselessVariable: number = 0;
 `;
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 10; i++) {
     // just add a bunch of do-nothing code to increase the parse size
     source += `
 if (true) {
@@ -70,7 +70,7 @@ export async function generateWaterfall(
   localId: string = uuid(),
   constantsPerLevel = 20,
   nestedImportsPerLevel = 3,
-  levels = 3
+  levels = 4
 ) {
   console.log(`Generating module ${localId}, w/ levels ${levels}`);
   const imports: string[] = [];
