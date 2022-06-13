@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module">
+      window.navigator.serviceWorker
+        .register('/vite-sw-dev-server.js', { type: 'module' })
+        .then(() => {
+          console.log('dev service worker registered');
+        })
+        .catch((e) => {
+          console.error('failed to register dev service worker', e);
+        });
+        const cacheName = 'dev-cache';
+const version = 'v0.0.1';
+      if (import.meta.hot) {
+        console.log('registering change handler')
+        import.meta.hot.on('sw:changed', async (data) => {
+          console.log('changed: ', data.filename)
+          const cache = await caches.open(version + cacheName);
+          await cache.delete(data.filename);
+          import.meta.hot.send('sw:ack-changed', {filename: data.filename})
+        })
+      }
+    </script>
     <title>Vite App</title>
   </head>
   <body>
