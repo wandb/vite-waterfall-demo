@@ -18,17 +18,17 @@ const devServiceWorkerPlugin = () => {
         return await fs.readFile('./src/devServiceWorker.ts', 'utf-8');
       }
     },
-    handleHotUpdate({ file, modules, server }) {
+    async handleHotUpdate({ file, modules, server }) {
       console.log("HOT UPDATE", [file, ...modules])
       const localFilePath = file.split(dir)[1];
 
-      // const promise = new Promise((resolve, reject) => {
-      //   changesAwaitingAck[localFilePath] = resolve;
-      // })
+      const promise = new Promise((resolve, reject) => {
+        changesAwaitingAck[localFilePath] = resolve;
+      })
 
-      // console.log(`SENDING UPDATE NOTIFICATION ${localFilePath}`)
-      // server.ws.send('sw:changed', {filename: localFilePath})
-      // await promise;
+      console.log(`SENDING UPDATE NOTIFICATION ${localFilePath}`)
+      server.ws.send('sw:changed', {filename: localFilePath})
+      await promise;
 
       return modules;
     },
